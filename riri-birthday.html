@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Happy 30th, Riri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Playfair+Display:ital,wght@0,900;1,400;1,700&family=Syne:wght@300;400;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --white: #FAFAF8;
+    --black: #0D0D0D;
+    --accent: #A0845C;
+    --accent-dim: #C9AD8A;
+    --gray: #888;
+    --light: #EDE0C4;
+  }
+  html, body {
+    min-height: 100%;
+    background: var(--white);
+    color: var(--black);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 0;
+    position: relative;
+  }
+
+  canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* top bar */
+  .topbar {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.8rem 2.5rem;
+    border-bottom: 1px solid var(--accent-dim);
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards 0.1s;
+  }
+  .topbar-label {
+    font-size: 0.62rem;
+    font-weight: 400;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+  .topbar-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+
+  /* hero */
+  .hero {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 2.5rem 1rem;
+    overflow: hidden;
+    min-height: 60vh;
+  }
+  .bg-thirty {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -54%);
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(18rem, 48vw, 36rem);
+    color: var(--light); opacity: 0.85;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    user-select: none;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    animation: fadeIn 1.2s ease forwards 0.3s;
+  }
+  .hero-content { position: relative; z-index: 1; }
+
+  .tag {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: slideRight 0.9s ease forwards 0.5s;
+  }
+  .main-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(5rem, 16vw, 11rem);
+    font-style: italic;
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--black);
+    opacity: 0;
+    animation: slideRight 1s cubic-bezier(0.16,1,0.3,1) forwards 0.65s;
+  }
+  .sub-row {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-top: 1.6rem;
+    opacity: 0;
+    animation: slideRight 1s ease forwards 0.85s;
+  }
+  .sub-line { width: 40px; height: 2px; background: var(--accent); opacity: 0.9; flex-shrink: 0; }
+  .sub-text {
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  /* divider */
+  .divider {
+    position: relative;
+    z-index: 2;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--accent), transparent);
+    margin: 2.5rem 2.5rem 0;
+  }
+
+  /* message section */
+  .message-section {
+    position: relative;
+    z-index: 2;
+    padding: 2.5rem 2.5rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 2.2fr;
+    gap: 3rem;
+    align-items: start;
+  }
+  @media (max-width: 600px) {
+    .message-section { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+  .message-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gray);
+    line-height: 1.8;
+  }
+  .message-label span {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--black);
+    margin-top: 0.5rem;
+    text-transform: none;
+  }
+  .message-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.1rem, 2vw, 1.28rem);
+    font-weight: 300;
+    line-height: 2;
+    color: #444;
+  }
+  .message-body em { font-style: italic; color: var(--accent); font-weight: 400; }
+  .message-body .accent { color: var(--accent); font-style: italic; }
+
+  /* footer */
+  .footer {
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid var(--accent-dim);
+    padding: 1.4rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .signature {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--black);
+  }
+  .heart { color: var(--accent); font-size: 1.1rem; }
+
+  /* scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.22s; }
+  .reveal-delay-3 { transition-delay: 0.36s; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  @keyframes slideRight {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div class="topbar">
+  <span class="topbar-label">A birthday dedication</span>
+  <span class="topbar-num">05-05-2026</span>
+</div>
+
+<div class="hero">
+  <div class="bg-thirty">30</div>
+  <div class="hero-content">
+    <p class="tag">Celebrating</p>
+    <h1 class="main-name">Riri</h1>
+    <div class="sub-row">
+      <div class="sub-line"></div>
+      <span class="sub-text">Thirty years of being extraordinary</span>
+    </div>
+  </div>
+</div>
+
+<div class="divider reveal"></div>
+
+<div class="message-section">
+  <div class="message-label reveal reveal-delay-1">
+    A note<br />from your<br />baby sister
+    <span>with love ♡</span>
+  </div>
+  <div class="message-body reveal reveal-delay-2">
+    Thirty looks like you — <em>radiant, rare, and entirely yourself.</em>
+    You've spent three decades collecting the best things life has to offer:
+    laughter that fills a room, a grace that makes everyone feel seen,
+    and a spirit that turns ordinary moments into something worth remembering.<br /><br />
+    This is gonna get very personal and cutesy which I usually don't do so get ready —<br /><br />
+    30 years ago today, the world was blessed with the most caring, loving person in the world and the best big sister. As much as we argue and annoy each other, as much as I cherish every moment and every second I share a room with you because I don't know when this beautiful ne3ma can go away (I mean married) 🥹<br /><br />
+    No words can explain how lucky I am to have such an amazing role model to look up to.
+    Watching you go through all these years and seeing how far you have come
+    <em>truly makes me tear up.</em><br /><br />
+    Thank you so much for spoiling me, guiding me, and never leaving
+    <span class="accent">fi khatry 7aga.</span>
+    I have so much love for you and I hope this new chapter is filled with
+    so much blessings, more success and happiness.<br /><br />
+    <em>30 ain't ready for you beeeksssss.</em>
+  </div>
+</div>
+
+<div class="footer reveal reveal-delay-3">
+  <span class="signature">With so much love, Your baby sister</span>
+  <span class="heart">♡</span>
+</div>
+
+<script>
+// scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+(function () {
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // petal colors: gold tones + blush
+  const PETAL_COLORS = ['#C9A84C','#D4B96A','#B8933F','#E2C880','#D4A574','#C49060'];
+
+  class Petal {
+    constructor() { this.reset(true); }
+    reset(init) {
+      this.x = Math.random() * canvas.width;
+      this.y = init ? Math.random() * canvas.height - canvas.height : -18;
+      this.w = Math.random() * 9 + 5;
+      this.h = this.w * (Math.random() * 0.5 + 1.3);
+      this.speedY = Math.random() * 0.9 + 0.4;
+      this.speedX = (Math.random() - 0.5) * 0.5;
+      this.angle = Math.random() * Math.PI * 2;
+      this.spin = (Math.random() - 0.5) * 0.022;
+      this.sway = Math.random() * Math.PI * 2;
+      this.swaySpeed = Math.random() * 0.018 + 0.006;
+      this.opacity = Math.random() * 0.55 + 0.2;
+      this.color = PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)];
+    }
+    update() {
+      this.sway += this.swaySpeed;
+      this.x += this.speedX + Math.sin(this.sway) * 0.5;
+      this.y += this.speedY;
+      this.angle += this.spin;
+      if (this.y > canvas.height + 20) this.reset(false);
+    }
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = this.opacity;
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.angle);
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, this.w / 2, this.h / 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  class Orb {
+    constructor() { this.reset(true); }
+    reset(init) {
+      this.x = Math.random() * canvas.width;
+      this.y = init ? Math.random() * canvas.height : canvas.height + 80;
+      this.r = Math.random() * 110 + 50;
+      this.speedY = Math.random() * 0.15 + 0.04;
+      this.speedX = (Math.random() - 0.5) * 0.1;
+      this.opacity = Math.random() * 0.04 + 0.012;
+      this.pulse = Math.random() * Math.PI * 2;
+      this.pulseSpeed = Math.random() * 0.005 + 0.002;
+    }
+    update() {
+      this.pulse += this.pulseSpeed;
+      this.y -= this.speedY;
+      this.x += this.speedX;
+      if (this.y < -this.r * 2) this.reset(false);
+    }
+    draw() {
+      const a = this.opacity * (0.7 + 0.3 * Math.sin(this.pulse));
+      const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r);
+      g.addColorStop(0, `rgba(201,168,76,${a})`);
+      g.addColorStop(1, `rgba(201,168,76,0)`);
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
+    }
+  }
+
+  const petals = Array.from({ length: 45 }, () => new Petal());
+  const orbs   = Array.from({ length: 14 }, () => new Orb());
+
+  function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    orbs.forEach(o => { o.update(); o.draw(); });
+    petals.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>
+</body>
+</html>
